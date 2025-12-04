@@ -131,6 +131,7 @@ having  c.annofondaz = (
 -- 6. Quante sono le nazioni (diverse) raggiungibili da ogni nazione 
 -- tramite uno o più voli?
 
+-- volo diretto
 select la1.nazione as nazione_partenza,
     count(distinct la2.nazione) as num_nazioni_arivo
 from luogoaeroporto la1, luogoaeroporto la2, 
@@ -165,6 +166,43 @@ where -- luogoaeroporto 1 <==> aeroporto 1
 group by la1.nazione;
 
 
+
+-- versione un volo diretto o un scalo
+select t.nazione_partenza, count(distinct nazione_arrivo)
+from (
+    -- volo diretto
+    select la1.nazione as nazione_partenza,
+        la2.nazione as nazione_arrivo
+    from arrpart ap1, arrpart ap2, aeroporto a1, aeroporto a2, 
+        luogoaeroporto la1, luogoaeroporto la2
+    where la1.aeroporto = a1.codice
+        and  a1.codice = ap1.partenza
+        and a2.codice = ap1.arrivo 
+        and a2.codice = la2.aeroporto
+        and la2.nazione <> la1.nazione
+    group by la1.nazione, la2.nazione
+
+union
+
+    -- un solo scalo
+    select la1.nazione as nazione_partenza,
+        la3.nazione as nazione_arrivo
+    from arrpart ap1, arrpart ap2, aeroporto a1, aeroporto a2, aeroporto a3, 
+        luogoaeroporto la1, luogoaeroporto la2, luogoaeroporto la3
+    where la1.aeroporto = a1.codice
+
+        and a1.codice = ap1.partenza
+        and a2.codice = ap1.arrivo 
+        and a2.codice = la2.aeroporto
+
+        and a2.codice = ap2.partenza
+        and ap2.arrivo = a3.aeroporto
+        and a3.aeroporto = la3.aeroporto
+
+        and la3.nazione <> la1.nazione
+    group by la1.nazione, la3.nazione
+) as t
+group by t.nazione_partenza;
 
 
 -- 7. Qual è la durata media dei voli che partono da ognuno degli aeroporti?
@@ -233,14 +271,13 @@ from aeroporto a
 except
 select a.codice, a.nome
 from arrpart ap, aeroporto a
-where ap.partenza = a.codice or ap.arrivo = a.codice
-group by a.codice;
+where ap.partenza = a.codice or ap.arrivo = a.codice;
 
 
--- versione 2      not in
+-- versione 2      
 select codice
 from aeroporto
-where codice not in (
+where codice not in (           -- not in (lista dei valori) o (select.. from..)
                 select partenza
                 from arrpart
                 union
@@ -248,11 +285,23 @@ where codice not in (
                 from arrpart
             );
 
--- versione 3      not exists
+-- versione 3      
 select a.codice
 from aeroporto a
 where NOT EXISTS (
-               select 1
+               select 1  -- non importa cosa c'è scritto, basta che  esiste una enupla
                from arrpart ap
                where ap.partenza = a.codice or ap.arrivo = a.codice
             );
+
+-- versione 4
+with AsV as (
+    select ap.partenza as codie_aerop
+    from arrpart ap
+    union
+    select ap.arrivo -- non serve, viene aggiunto in colonna codice_aerop
+    from arrpart ap
+)
+select distinct a.codice
+from aeroporto a, AsV
+where a.codice not in (select asv.codice_aerop from asv);

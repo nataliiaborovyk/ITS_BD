@@ -2,12 +2,12 @@
 -- euro [2 punti]
 select p.id, p.nome, p.cognome
 from persona p
-where p.sttipendio <= 40000;
+where p.sttipendio <= 40000;            -- !!!!!!!!!!!!!!!!!! STIPENDIO  - NON STTIPENDIO !!!!!!
 
 -- 2. Quali sono i ricercatori che lavorano ad almeno un
 -- progetto e hanno uno stipendio di al massimo 40000 [2
 -- punti]
-select p.id, p.nome, p.cognome
+select p.id, p.nome, p.cognome          -- !!!!!!!!!!!!!!!!!!!!! MANCA: DISTINCT P.ID !!!!!!!!!
 from persona p, attivitaprogetto ap
 where ap.persona = p.id
     and p.stipendio <= 40000
@@ -21,7 +21,7 @@ from progetto p;
 -- 4. Qual è il budget totale dei progetti a cui lavora ogni
 -- persona. Per ogni persona restituire nome, cognome e
 -- budget totale dei progetti nei quali è coinvolto. [3 punti]
-select p.id, p.nome, p.cognome, sum(pr.budget)
+select p.id, p.nome, p.cognome, sum(pr.budget)  -- !!!!!!!!!!!!! MANCA: SUM( DISTINCT PR.BUDGET) !!!!!!
 from attivitaprogetto ap, progetto pr, persona p
 where ap.progetto = pr.id
     and ap.persona = p.id
@@ -46,6 +46,7 @@ from persona p, assenzza a
 where a.persona = p.id
     and a.tipo = 'Malattia'
     and p.posizione = 'Professore Associato';
+-- !!!!!! MANCA GROUP BY P.ID !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 -- 7. Qual è il numero totale di ore, per ogni persona, dedicate
 -- al progetto con id ‘5’. Per ogni persona che lavora al
