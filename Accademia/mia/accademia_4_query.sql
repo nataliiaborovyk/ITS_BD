@@ -54,6 +54,6 @@ where tipo = 'Didattica'
 order by giorno ASC;
 
 --11
-select nomi, co
+select nomi, cognome
 from Assenza a, Prsone p
 where a.persone = p.id
