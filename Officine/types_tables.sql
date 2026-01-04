@@ -1,7 +1,4 @@
 
--- deferrable initially deferred;
-
-
 -- [Riparazione.Terminata]
 -- Per ogni rep: Riparazione rep.is_terminata = True se e solo se rep.dataRiconsegna è valorizzata
 
