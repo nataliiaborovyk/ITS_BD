@@ -28,8 +28,7 @@ group by a.tipo;
 -- Ordinari". [2 punti]
 select max(p.stipendio)
 from persona p
-where p.posizione = 'Professore Ordinario'
-group by(p.posizione);
+where p.posizione = 'Professore Ordinario';
 
 -- 6. Quali sono le attività e le ore spese dalla persona con id 1
 -- nelle attività del progetto con id 4, ordinate in ordine
@@ -65,13 +64,20 @@ where p.posizione = 'Professore Ordinario'
     );
 
 with max_stipendio_table as (
-    select max(stipendio)
+    select max(stipendio) as max_stipendio
     from persona p
     where p.posizione = 'Professore Ordinario')
 select * 
 from persona p, max_stipendio_table
 where p.posizione = 'Professore Ordinario'
     and p.stipendio = max_stipendio_table.max_stipendio;
+
+
+
+
+
+
+
 
 
 -- 9. Restituire la somma totale delle ore relative alle attività

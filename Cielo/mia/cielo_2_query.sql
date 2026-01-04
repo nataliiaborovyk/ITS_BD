@@ -182,7 +182,7 @@ from (
         and la2.nazione <> la1.nazione
     group by la1.nazione, la2.nazione
 
-union
+    union
 
     -- un solo scalo
     select la1.nazione as nazione_partenza,
@@ -285,7 +285,7 @@ where codice not in (           -- not in (lista dei valori) o (select.. from..)
                 from arrpart
             );
 
--- versione 3      
+-- versione 3      piu costosa perche ricalcola la query anidata    
 select a.codice
 from aeroporto a
 where NOT EXISTS (
