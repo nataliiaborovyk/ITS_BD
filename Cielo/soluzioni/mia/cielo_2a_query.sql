@@ -1,7 +1,7 @@
 -- 1 Quante sono le compagnie che operano (sia in arrivo che in partenza) nei diversi
 -- aeroporti?
 
-select a.codice,a.nome, count(*)
+select a.codice,a.nome, count(*)  -- count(distinct comp) 
 from arrpart ap, aeroporto a
 where ap.partenza = a.codice or ap.arrivo = a.codice
 group by a.codice
@@ -23,7 +23,7 @@ where ap.codice = v.codice
 -- 3. Quanti sono gli aeroporti sui quali opera la compagnia ‘Apitalia’, per ogni nazione
 -- nella quale opera?
 
-select count(distinct la.aeroporto)
+select la.nazione, count(distinct la.aeroporto)
 from arrpart ap, aeroporto a, luogoaeroporto la
 where ap.partenza = a.codice or ap.arrivo = a.codice
     and a.codice = la.aeroporto
@@ -34,7 +34,9 @@ group by la.nazione
 -- 4. Qual è la media, il massimo e il minimo della durata dei voli effettuati dalla
 -- compagnia ‘MagicFly’ ?
 
-select round(avg(v.durataminuti)::numeric, 2)
+select round(avg(v.durataminuti)::numeric, 2)as media,
+    max(durataminuti) as massimo, 
+	min(durataminuti) as minimo
 from  volo v
 where v.comp = 'MagicFly'
 
@@ -58,6 +60,13 @@ where ap.codice = v.codice
     and c.annofondaz = ma.ma
 group by a.codice
 
+
+select a.codice, a.nome, min(c.annofondaz) as anno
+from aeroporto a, arrpart ap, compagnia c
+where (a.codice = ap.arrivo or a.codice = ap.partenza)
+and ap.comp = c.nome
+group by a.codice, a.nome;
+
 -- 6. Quante sono le nazioni (diverse) raggiungibili da ogni nazione tramite uno o più
 -- voli?
 
@@ -74,13 +83,19 @@ where -- luogoaeroporto 1 <==> aeroporto 1
     and la1.nazione <> la2.nazione
 group by la1.nazione
 
+select lp.nazione as nazione, count(distinct la.nazione) 
+from arrpart ap, luogoaeroporto lp, luogoaeroporto la
+where ap.partenza = lp.aeroporto
+	and ap.arrivo = la.aeroporto
+	and lp.nazione <> la.nazione
+group by lp.nazione;
+
 -- 7. Qual è la durata media dei voli che partono da ognuno degli aeroporti?
 
 select a.nome, avg(v.durataminuti)
 from arrpart ap, aeroporto a, volo v
 where ap.codice = a.codice
     and ap.comp = v.comp
-    and v.comp = c.nome
     and ap.partenza = a.codice 
 group by a.codice
 
@@ -89,23 +104,23 @@ group by a.codice
 -- a partire dal 1950?
 
 select v.comp, sum(v.durataminuti)
-from volo v, compagnie c1
+from volo v, compagnie c
 where v.comp = c.nome
     and c.annofondaz >= 1950
 group by v.comp
 
 -- 9. Quali sono gli aeroporti nei quali operano esattamente due compagnie?
 
-select
-from arrpart ap, aeroporto a1
-where ap.codice = a.codice
+select a.codice, a.nome
+from arrpart ap, aeroporto a
+where ap.codice = a.codice  -- ?
     and ap.partenza = a.codice or ap.arrivo = a.codice
 group by a.codice
 having count(distinct ap.comp) = 2
 
 -- 10. Quali sono le città con almeno due aeroporti?
 
-select
+select citta
 from luogoaeroporto
 group by citta
 having  count(aeroporto) >= 2
@@ -113,15 +128,15 @@ having  count(aeroporto) >= 2
 -- 11. Qual è il nome delle compagnie i cui voli hanno una durata media maggiore di 6
 -- ore?
 
-select
+select comp
 from volo
 group by comp
-having avg(durataminuti) >6
+having avg(durataminuti) > 360
 
 -- 12. Qual è il nome delle compagnie i cui voli hanno tutti una durata maggiore di 100
 -- minuti?
 
-select
+select comp
 from volo
 group by comp
 having min(durataminuti) > 100

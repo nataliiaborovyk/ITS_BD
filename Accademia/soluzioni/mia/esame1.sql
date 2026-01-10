@@ -72,10 +72,54 @@ from persona p, max_stipendio_table
 where p.posizione = 'Professore Ordinario'
     and p.stipendio = max_stipendio_table.max_stipendio;
 
+-- Opzione 2: Query annidata nella WHERE (equivalente alla 1)
+select id as persona_id, nome, cognome
+from persona
+where posizione = 'Professore Ordinario'
+  and stipendio = (
+    select max(stipendio) as max_stipendio_P0
+    from persona
+    where posizione = 'Professore Ordinario'
+  );
 
+-- Opzione 3: GROUP BY + HAVING (costa più della 2)
+select id as persona_id, nome, cognome
+from persona
+where posizione = 'Professore Ordinario'
+group by id, nome, cognome
+having stipendio = (
+  select max(stipendio) as max_stipendio_P0
+  from persona
+  where posizione = 'Professore Ordinario'
+);
 
+-- Variante vista sopra (con posizione anche nel GROUP BY e confronto con max(stipendio))
+select id, nome, cognome, posizione
+from persona
+group by id, nome, cognome, posizione
+having stipendio = max(stipendio)
+   and posizione = 'Professore Ordinario';
 
+-- Opzione 4: >= ALL
+select id as persona_id, nome, cognome
+from persona
+where posizione = 'Professore Ordinario'
+  and stipendio >= all (
+    select stipendio
+    from persona
+    where posizione = 'Professore Ordinario'
+  );
 
+-- Opzione 5: NOT EXISTS
+select p.id as persona_id, p.nome, p.cognome
+from persona p
+where p.posizione = 'Professore Ordinario'
+  and not exists (
+    select *
+    from persona p1
+    where p1.posizione = 'Professore Ordinario'
+      and p1.stipendio > p.stipendio
+  );
 
 
 
@@ -117,6 +161,6 @@ where a.persona = p.id
 
 
 select*
-from persona p2left outer join assenza a
+from persona p outer join assenza a
 on p.id = a.persona
 and a.tipo = 'Chiusura Universitaria'
