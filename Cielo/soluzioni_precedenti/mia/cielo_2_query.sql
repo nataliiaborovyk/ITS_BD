@@ -151,7 +151,7 @@ group by la1.nazione;
 -- versione con filter per rapresentera anche i voli interni
 select la1.nazione as nazione_partenza,
     count(distinct la2.nazione) 
-    filter (where la1.nazione <> la2.nazione)
+    filter (where la1.nazione <> la2.nazione)  -- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 from luogoaeroporto la1, luogoaeroporto la2, 
 	aeroporto a1, aeroporto a2, 
 	arrpart ap
