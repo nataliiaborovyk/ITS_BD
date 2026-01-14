@@ -1,14 +1,29 @@
 
 
+
 create table categoria (
-	nome stringa primary key,
-	super stringa,
+	nome stringa primary key,  -- partecipa al ruolo di sotto cattegoria [0..1]
+	super stringa,   -- perche 0..1
 	check (nome <> super)
+	-- + vincolo che evita cicli 
 );
 
 alter table categoria add constraint gerarchia 
 	foreign key (super)
 		references categoria(nome);
+
+-- data la supercategoria C restituisce tutte le sue categorie
+select * from categoria
+where super = 'C'
+
+
+-- dat ala categoria C trova la sua supercategoria
+select super  from categoria
+where nome = 'C'
+
+select *
+from cattegoria 
+order by super, nome
 
 -- WITH RECURSIVE
 

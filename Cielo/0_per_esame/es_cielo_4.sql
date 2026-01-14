@@ -1,5 +1,34 @@
+
 -- 1. Quali sono i voli di durata maggiore della durata media di tutti i voli della stessa
 -- compagnia? Restituire il codice del volo, la compagnia e la durata.
+
+
+with medie as (
+    select v2.comp as compagnia, round(avg(durataminuti)) as durata_media_per_comp
+    from volo v2
+    group by v2.comp
+)
+select v1.codice, v1.comp, v1.durataminuti, medie.durata_media_per_comp
+from volo v1, medie
+where v1.durataminuti > (
+    select round(avg(durataminuti)) as durata_media_per_comp
+	from volo v2
+    where v2.comp = v1.comp and medie.compagnia = v2.comp
+);
+
+-- solo durata
+select v1.codice, v1.comp, v1.durataminuti
+from volo v1
+where v1.durataminuti > (
+    select round(avg(durataminuti)) as durata_media_per_comp
+	from volo v2
+    where v2.comp = v1.comp
+)
+
+-- durata media per compania
+select v2.comp, round(avg(durataminuti)) as durata_media_per_comp
+from volo v2
+group by v2.comp
 
 
 -- 2. Quali sono le città che hanno piu” di un aeroporto e dove almeno uno di questi ha

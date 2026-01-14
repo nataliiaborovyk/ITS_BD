@@ -4,7 +4,7 @@
 -- l’insieme delle aree verdi fruibili che hanno almeno un soggetto verde
 -- della specie 'Pinus pinea' e piantata almeno 5 anni fa.
 
-select a.id, sp.n_scientifico
+select distinct a.id, sp.n_scientifico
 from areaverde a, soggettoverde sv, specie sp
 where sv.area = a.id
     and sv.specie = sp.n_scientifico
@@ -175,6 +175,7 @@ where a.operatore = o.cf
 
 -- vers 1 - confronto in formato interval
 select avg(i.durata * interval '1 minute') as durata_prevista_media,
+V   -- avg(make_interval(min => i.durata))
     avg(ia.fine - i.inizio) as durata_effettiva_media-- media_prev, media ef
 from intervento i, interventoassegnato ia
 where ia.id_intervento = i.id  
