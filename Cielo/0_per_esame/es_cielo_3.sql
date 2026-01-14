@@ -65,8 +65,8 @@ where ap.partenza = la.aeroporto
     and ap.codice = v.codice
     and ap.comp = v.comp
     and la.nazione = 'Italy'
-group by ap.comp, dm.media_durata_tot -- non va incluso v.durataminuti 
-having round(avg(v.durataminuti)) < dm.media_durata_tot   -- no! perche?
+group by ap.comp, dm.media_durata_tot -- non va incluso v.durataminuti !
+having round(avg(v.durataminuti)) < dm.media_durata_tot   --- si
 
 
 with 
