@@ -95,6 +95,7 @@ group by la1.nazione
 -- prima creo i gruppi e poi per ogni gruppo facio i calcoli.
 -- cosi non escludo la nazione che non ha voli verso altri nazioni
 
+
 -- 7. Qual è la durata media dei voli che partono da ognuno degli aeroporti?
 select ap.partenza, round(avg(v.durataminuti))
 from arrpart ap, volo v

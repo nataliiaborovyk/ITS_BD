@@ -27,7 +27,7 @@ create table falesia (
     nome stringa primary key,
     latitudine latitudine not null,
     longitudine longitudine not null
-    -- v.inclusione falesia(nome) occorre set_fal(falesia)
+    --  se accorpo non serve v.inclusione falesia(nome) occorre set_fal(falesia)
 );
 
 create table settore (
@@ -40,15 +40,15 @@ create table settore (
         references falesia(nome)
 );
 
-create table set_fal (
-    falesia stringa not null,
-    settore integer not null,
-    primary key(falesia, settore),
-    foreign key (falesia)
-        references falesia(nome),
-    foreign key (settore)
-        references settore(id)
-);
+-- create table set_fal (
+--     falesia stringa not null,
+--     settore integer not null,
+--     primary key(falesia, settore),
+--     foreign key (falesia)
+--         references falesia(nome),
+--     foreign key (settore)
+--         references settore(id)
+-- );
 
 create table persona (
     username stringa primary key
